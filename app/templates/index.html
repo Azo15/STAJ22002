@@ -369,14 +369,14 @@
             <label for="quick-description" style="font-size:11px; font-weight:600; color:var(--text-secondary); text-transform:uppercase; margin-bottom:6px; display:block;">
               Sorun Açıklaması
             </label>
-            <input type="text" id="quick-description" required 
+            <input type="text" id="quick-description" required {% if demo %}disabled{% endif %} 
                    placeholder="Örn: 2. Kat poliklinik barkod yazıcı kağıt sıkışması"
                    style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-main); font-size: 13px; outline: none; transition: border-color 0.2s;"
                    onfocus="this.style.borderColor='var(--primary)';"
                    onblur="this.style.borderColor='var(--border)';">
           </div>
           
-          <button type="submit" id="quick-submit-btn" class="btn-primary-modern" style="justify-content:center; padding:10px; width:100%; border:none; margin-top:8px;">
+          <button type="submit" id="quick-submit-btn" {% if demo %}disabled{% endif %} class="btn-primary-modern" style="justify-content:center; padding:10px; width:100%; border:none; margin-top:8px;">
             <i class="bi bi-plus-circle-fill"></i> Talebi Gönder
           </button>
         </form>
@@ -385,6 +385,7 @@
   </div>
 </div>
 
+{% if not demo %}
 <!-- AJAX ile Hızlı Bilet Gönderme Scripti -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -435,6 +436,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
+{% endif %}
 
 <!-- Alt bilgi -->
 <div class="text-center mt-5 animate-in" style="color: var(--text-muted); font-size: 12px;">

@@ -1,4 +1,4 @@
-{% extends "no_show_demo_base.html" if demo else "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}No-Show Analizi — Hastane AI Platformu{% endblock %}
 {% block page_title %}No-Show Analizi{% endblock %}
@@ -47,9 +47,11 @@
             </a>
           {% endfor %}
           </div>
-        {% else %}
+          <p class="small text-muted mt-3 mb-1">Yeni tahmin bu demoda kapalıdır.</p>
+        {% endif %}
         <form method="POST" action="{{ url_for('no_show.predict') }}" id="predict-form">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <fieldset {% if demo %}disabled{% endif %}>
+          {% if not demo %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
 
           <!-- Hasta Adı (opsiyonel — kalıcı kayıt ve dashboard listesi için) -->
           <div class="mb-3">
@@ -166,8 +168,8 @@
           <button type="submit" class="btn-primary-modern w-100 justify-content-center">
             <i class="bi bi-cpu"></i> Riski Tahmin Et
           </button>
+          </fieldset>
         </form>
-        {% endif %}
       </div>
     </div>
   </div>

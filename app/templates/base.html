@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Hastane Kurumsal Yapay Zeka Platformu — No-Show Tahmin ve IT Destek Yönetim Sistemi" />
-  <meta name="csrf-token" content="{{ csrf_token() }}" />
+  <meta name="csrf-token" content="{{ "" if demo else csrf_token() }}" />
   <title>{% block title %}Hastane AI Platformu{% endblock %}</title>
 
   <!-- Bootstrap 5.3 -->
@@ -178,6 +178,13 @@
        ANA İÇERİK
   ═══════════════════════════════════════════════════════════════════ -->
   <main class="main-content" id="main-content">
+    {% if demo %}
+    <aside class="alert alert-info">
+      <strong>Salt okunur demo.</strong> Sentetik randevular ve önceden hesaplanmış sonuçlar gösterilir.
+      <a href="./home.html">Kontrol paneli</a> · <a href="./">No-Show analizi</a> ·
+      <a href="https://github.com/Azo15/STAJ22002#readme">Kaynak kodu ve kurulum</a>
+    </aside>
+    {% endif %}
     {% block content %}{% endblock %}
   </main>
 
@@ -231,7 +238,7 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Ana JS -->
-  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% if not demo %}<script src="{{ url_for('static', filename='js/main.js') }}"></script>{% endif %}
   {% block extra_scripts %}{% endblock %}
 </body>
 </html>

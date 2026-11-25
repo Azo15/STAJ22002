@@ -32,11 +32,33 @@ def export(destination: Path) -> None:
 
     destination.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(ROOT / "app/static/css/style.css", destination / "style.css")
+    demo_urls = {
+        "main.index": "./home.html",
+        "no_show.dashboard": "./",
+        "static": "./style.css",
+    }
+    app.jinja_env.globals["url_for"] = lambda endpoint, **kwargs: demo_urls.get(endpoint, "./restricted.html")
+    context = dict(
+        demo=True, system_settings={"hospital_name": "Hastane AI Platformu"},
+        session={"user_name": "Demo Ziyaretçisi", "user_role": "Salt okunur"},
+    )
     with app.test_request_context():
+        stats = dict(
+            total_appointments=len(samples),
+            high_risk_count=sum(sample["risk_color"] == "danger" for sample in samples),
+            no_show_rate=round(100 * sum(sample["prediction"] for sample in samples) / len(samples), 1),
+            ai_accuracy=None, open_tickets=0, resolved_tickets=0,
+        )
+        (destination / "home.html").write_text(
+            render_template("index.html", stats=stats, recent_tickets=[], **context), encoding="utf-8"
+        )
+        (destination / "restricted.html").write_text(
+            render_template("demo_restricted.html", **context), encoding="utf-8"
+        )
         for sample in samples:
             name = "index.html" if sample["id"] == 1 else f"ornek-{sample['id']}.html"
             html = render_template(
-                "no_show.html", demo=True, selected_id=sample["id"],
+                "no_show.html", selected_id=sample["id"], form_data=sample, **context,
                 high_risk_appointments=samples, prediction_result=sample,
             )
             (destination / name).write_text(html, encoding="utf-8")
