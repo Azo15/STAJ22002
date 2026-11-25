@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "no_show_demo_base.html" if demo else "base.html" %}
 
 {% block title %}No-Show Analizi — Hastane AI Platformu{% endblock %}
 {% block page_title %}No-Show Analizi{% endblock %}
@@ -12,13 +12,13 @@
       Randevu Kaçırma <span class="text-gradient">Risk Analizi</span>
     </h1>
     <p class="page-header-subtitle">
-      LightGBM modeli ile hastalara göre randevu kaçırma olasılığı tahmin edin.
+      {{ "Örnek randevular için önceden hesaplanmış LightGBM sonuçlarını inceleyin." if demo else "LightGBM modeli ile hastalara göre randevu kaçırma olasılığı tahmin edin." }}
     </p>
   </div>
   <div>
     <span class="badge rounded-pill fw-semibold px-3 py-2" 
           style="background:#dcfce7; color:#15803d; font-size:12px;">
-      <i class="bi bi-cpu me-1"></i> Model Aktif
+      <i class="bi bi-cpu me-1"></i> {{ "Hazır Sonuçlar" if demo else "Model Aktif" }}
     </span>
   </div>
 </div>
@@ -33,10 +33,21 @@
       <div class="card-header-modern">
         <span class="card-title-modern">
           <i class="bi bi-search" style="color:var(--primary);"></i>
-          Yeni Tahmin Yap
+          {{ "Örnek Randevu Seç" if demo else "Yeni Tahmin Yap" }}
         </span>
       </div>
       <div class="card-body-modern">
+        {% if demo %}
+          <div class="list-group">
+          {% for sample in high_risk_appointments %}
+            <a class="list-group-item list-group-item-action{% if sample.id == selected_id %} active{% endif %}"
+               href="{{ './' if sample.id == 1 else './ornek-' ~ sample.id ~ '.html' }}"
+               {% if sample.id == selected_id %}aria-current="page"{% endif %}>
+              {{ sample.patient_name }} · {{ sample.poliklinik }}
+            </a>
+          {% endfor %}
+          </div>
+        {% else %}
         <form method="POST" action="{{ url_for('no_show.predict') }}" id="predict-form">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
@@ -156,6 +167,7 @@
             <i class="bi bi-cpu"></i> Riski Tahmin Et
           </button>
         </form>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -334,7 +346,7 @@
       <div style="padding:14px 24px; border-top:1px solid var(--border);
                   font-size:12px; color:var(--text-muted);">
         <i class="bi bi-info-circle me-1"></i>
-        Bu liste, bu sistem üzerinden gerçekten çalıştırılan model tahminlerinden oluşur ve kalıcı olarak saklanır.
+        {{ "Bu tablo yalnızca sentetik örnekleri içerir." if demo else "Bu liste, bu sistem üzerinden gerçekten çalıştırılan model tahminlerinden oluşur ve kalıcı olarak saklanır." }}
       </div>
     </div>
 
